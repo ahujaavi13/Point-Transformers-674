@@ -1,0 +1,21 @@
+batch_size: 16
+epoch: 200
+learning_rate: 1e-3
+gpu: 1
+num_point: 512
+optimizer: Adam
+weight_decay: 1e-4
+normal: True
+seed: 42
+modelnet10: True
+
+defaults:
+  - model: Hengshuang
+
+hydra:
+  run:
+    dir: log/${model.name}
+
+  sweep:
+    dir: log
+    subdir: ${model.name}
