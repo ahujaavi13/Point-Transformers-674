@@ -109,12 +109,12 @@ def main(args):
         classifier.train()
         for batch_id, data in tqdm(enumerate(trainDataLoader, 0), total=len(trainDataLoader), smoothing=0.9):
             points, target = data
-            points = provider.random_point_dropout(points)
-            points[:, :, 0:3] = provider.random_scale_point_cloud(points[:, :, 0:3])
-            points[:, :, 0:3] = provider.shift_point_cloud(points[:, :, 0:3])
+            points, target = points.to(device), target.to(device)
+            points = provider.random_point_dropout(points, device=device)
+            points[:, :, 0:3] = provider.random_scale_point_cloud(points[:, :, 0:3], device=device)
+            points[:, :, 0:3] = provider.shift_point_cloud(points[:, :, 0:3], device=device)
             target = target[:, 0]
 
-            points, target = points.to(device), target.to(device)
             optimizer.zero_grad()
 
             pred = classifier(points)
