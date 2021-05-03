@@ -17,7 +17,7 @@ import omegaconf
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-def test(model, loader, num_class=40):
+def test(model, loader, num_class=10):
     mean_correct = []
     class_acc = np.zeros((num_class, 3))
     for j, data in tqdm(enumerate(loader), total=len(loader)):
@@ -66,7 +66,7 @@ def main(args):
     testDataLoader = torch.utils.data.DataLoader(TEST_DATASET, batch_size=args.batch_size, shuffle=False, num_workers=4)
 
     '''MODEL LOADING'''
-    args.num_class = 40
+    args.num_class = 10
     args.input_dim = 6 if args.normal else 3
     shutil.copy(hydra.utils.to_absolute_path('models/{}/model.py'.format(args.model.name)), '.')
 
@@ -109,11 +109,9 @@ def main(args):
         classifier.train()
         for batch_id, data in tqdm(enumerate(trainDataLoader, 0), total=len(trainDataLoader), smoothing=0.9):
             points, target = data
-            points = points.data.numpy()
             points = provider.random_point_dropout(points)
             points[:, :, 0:3] = provider.random_scale_point_cloud(points[:, :, 0:3])
             points[:, :, 0:3] = provider.shift_point_cloud(points[:, :, 0:3])
-            points = torch.Tensor(points)
             target = target[:, 0]
 
             points, target = points.to(device), target.to(device)
