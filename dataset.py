@@ -10,7 +10,7 @@ class ModelNetDataLoader(Dataset):
         self.root = root
         self.npoints = npoint
         self.uniform = uniform
-        self.catfile = os.path.join(self.root, 'modelnet40_shape_names.txt')
+        self.catfile = os.path.join(self.root, 'modelnet10_shape_names.txt')
 
         self.cat = [line.rstrip() for line in open(self.catfile)]
         self.classes = dict(zip(self.cat, range(len(self.cat))))
