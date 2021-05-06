@@ -55,7 +55,8 @@ def main(args):
 
     '''DATA LOADING'''
     logger.info('Load dataset ...')
-    DATA_PATH = hydra.utils.to_absolute_path('modelnet40_normal_resampled/')
+    #DATA_PATH = hydra.utils.to_absolute_path('modelnet40_normal_resampled/')
+    DATA_PATH = '/content/drive/MyDrive/modelnet40_normal_resampled/'
 
     TRAIN_DATASET = ModelNetDataLoader(root=DATA_PATH, npoint=args.num_point, split='train',
                                        normal_channel=args.normal, modelnet10=args.modelnet10)
