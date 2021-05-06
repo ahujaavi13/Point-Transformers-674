@@ -69,7 +69,7 @@ def main(args):
     '''MODEL LOADING'''
     args.num_class = 10
     args.input_dim = 6 if args.normal else 3
-    shutil.copy(hydra.utils.to_absolute_path('models/{}/model.py'.format(args.model.name)), '.')
+    shutil.copy(hydra.utils.to_absolute_path('Point-Transformers-674/models/{}/model.py'.format(args.model.name)), '.')
 
     classifier = getattr(importlib.import_module('models.{}.model'.format(args.model.name)), 'PointTransformer')(
         args).to(device)
