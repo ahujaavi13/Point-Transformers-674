@@ -13,6 +13,7 @@ import importlib
 import shutil
 import hydra
 import omegaconf
+from pruning_utils import prune_model, show_transformer_sparsity
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -41,6 +42,7 @@ def test(model, loader, num_class=10):
 
 @hydra.main(config_path='config', config_name='config')
 def main(args):
+    os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
     omegaconf.OmegaConf.set_struct(args, False)
 
     '''HYPER PARAMETER'''
@@ -129,6 +131,12 @@ def main(args):
 
         train_instance_acc = np.mean(mean_correct)
         logger.info('Train Instance Accuracy: %f' % train_instance_acc)
+
+        # Perform L1 pruning of model after every epoch to maintain sparsity
+        if args.model.name == 'Sumanu':
+            classifier = prune_model(classifier, args)
+            # print sparsity
+            show_transformer_sparsity(classifier)
 
         with torch.no_grad():
             instance_acc, class_acc = test(classifier.eval(), testDataLoader)
