@@ -13,6 +13,7 @@ import importlib
 import shutil
 import hydra
 import omegaconf
+from pruning_utils import prune_model, show_transformer_sparsity
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -40,6 +41,7 @@ def test(model, loader, num_class=10):
 
 @hydra.main(config_path='config', config_name='config')
 def main(args):
+    os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
     omegaconf.OmegaConf.set_struct(args, False)
 
     '''HYPER PARAMETER'''
@@ -54,8 +56,7 @@ def main(args):
 
     '''DATA LOADING'''
     logger.info('Load dataset ...')
-    #DATA_PATH = hydra.utils.to_absolute_path('modelnet40_normal_resampled/')
-    DATA_PATH = '/content/drive/MyDrive/modelnet40_normal_resampled/'
+    DATA_PATH = hydra.utils.to_absolute_path('modelnet40_normal_resampled/')
 
     TRAIN_DATASET = ModelNetDataLoader(root=DATA_PATH, npoint=args.num_point, split='train',
                                        normal_channel=args.normal, modelnet10=args.modelnet10)
@@ -68,7 +69,7 @@ def main(args):
     '''MODEL LOADING'''
     args.num_class = 10
     args.input_dim = 6 if args.normal else 3
-    shutil.copy(hydra.utils.to_absolute_path('Point-Transformers-674/models/{}/model.py'.format(args.model.name)), '.')
+    shutil.copy(hydra.utils.to_absolute_path('models/{}/model.py'.format(args.model.name)), '.')
 
     classifier = getattr(importlib.import_module('models.{}.model'.format(args.model.name)), 'PointTransformer')(
         args).to(device)
@@ -129,6 +130,12 @@ def main(args):
 
         train_instance_acc = np.mean(mean_correct)
         logger.info('Train Instance Accuracy: %f' % train_instance_acc)
+
+        # Perform L1 pruning of model after every epoch to maintain sparsity
+        if args.model.name == 'Sumanu':
+            classifier = prune_model(classifier, args)
+            # print sparsity
+            show_transformer_sparsity(classifier)
 
         with torch.no_grad():
             instance_acc, class_acc = test(classifier.eval(), testDataLoader)
