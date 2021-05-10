@@ -17,6 +17,7 @@ from pruning_utils import prune_model, show_transformer_sparsity
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+
 def test(model, loader, num_class=10):
     mean_correct = []
     class_acc = np.zeros((num_class, 3))

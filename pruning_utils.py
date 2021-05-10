@@ -3,6 +3,7 @@ from torch.nn.utils import prune
 import torch
 import statistics
 
+
 def prune_transformer_block(transformer_block, args):
     pruning_amount = float(args.pruning_amount)
     prune.ln_structured(transformer_block.fc1, name='weight', amount=pruning_amount, n=0, dim=0)
@@ -18,6 +19,7 @@ def prune_transformer_block(transformer_block, args):
             prune.ln_structured(sub_module, name='weight', amount=pruning_amount, n=0, dim=0)
             prune.remove(sub_module, 'weight')
     return transformer_block
+
 
 def prune_model(model, args):
     pruning_style = args.pruning_style
@@ -42,8 +44,10 @@ def prune_model(model, args):
                 list(model.modules())[idx] = module
     return model
 
+
 def get_sparsity(layer):
     return 100. * float(torch.sum(layer.weight == 0)) / float(layer.weight.nelement())
+
 
 def show_transformer_sparsity(model):
     sparsity_list = []
