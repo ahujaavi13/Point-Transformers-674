@@ -13,6 +13,7 @@ import importlib
 import shutil
 import hydra
 import omegaconf
+from pruning_utils import prune_model, show_transformer_sparsity
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -41,6 +42,7 @@ def test(model, loader, num_class=10):
 
 @hydra.main(config_path='config', config_name='config')
 def main(args):
+    os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
     omegaconf.OmegaConf.set_struct(args, False)
 
     '''HYPER PARAMETER'''
@@ -109,12 +111,12 @@ def main(args):
         classifier.train()
         for batch_id, data in tqdm(enumerate(trainDataLoader, 0), total=len(trainDataLoader), smoothing=0.9):
             points, target = data
-            points = provider.random_point_dropout(points)
-            points[:, :, 0:3] = provider.random_scale_point_cloud(points[:, :, 0:3])
-            points[:, :, 0:3] = provider.shift_point_cloud(points[:, :, 0:3])
+            points, target = points.to(device), target.to(device)
+            points = provider.random_point_dropout(points, device=device)
+            points[:, :, 0:3] = provider.random_scale_point_cloud(points[:, :, 0:3], device=device)
+            points[:, :, 0:3] = provider.shift_point_cloud(points[:, :, 0:3], device=device)
             target = target[:, 0]
 
-            points, target = points.to(device), target.to(device)
             optimizer.zero_grad()
 
             pred = classifier(points)
@@ -129,6 +131,12 @@ def main(args):
 
         train_instance_acc = np.mean(mean_correct)
         logger.info('Train Instance Accuracy: %f' % train_instance_acc)
+
+        # Perform L1 pruning of model after every epoch to maintain sparsity
+        if args.model.name == 'Sumanu':
+            classifier = prune_model(classifier, args)
+            # print sparsity
+            show_transformer_sparsity(classifier)
 
         with torch.no_grad():
             instance_acc, class_acc = test(classifier.eval(), testDataLoader)

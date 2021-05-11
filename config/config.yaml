@@ -9,8 +9,12 @@ normal: True
 seed: 42
 modelnet10: True
 
+# Structured pruning args
+pruning_style: mid
+pruning_amount: 0.75
+
 defaults:
-  - model: Hengshuang
+  - model: Sumanu
 
 hydra:
   run:

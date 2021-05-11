@@ -6,7 +6,8 @@ from pointnet_util import farthest_point_sample, pc_normalize
 
 
 class ModelNetDataLoader(Dataset):
-    def __init__(self, root, npoint=1024, split='train', uniform=False, normal_channel=True, cache_size=15000, modelnet10=True):
+    def __init__(self, root, npoint=1024, split='train', uniform=False, normal_channel=True, cache_size=15000,
+                 modelnet10=True):
         self.root = root
         self.npoints = npoint
         self.uniform = uniform
