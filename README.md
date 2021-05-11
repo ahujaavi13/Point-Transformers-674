@@ -4,7 +4,7 @@
    * https://shapenet.cs.stanford.edu/media/modelnet40_normal_resampled.zip
 
 ## Weight Files
-   * https://drive.google.com/drive/folders/1TUehCpCVpw8myE1Kj9Coe6z8QIPW0c9F?usp=sharing
+   * https://drive.google.com/drive/folders/1f1UwhSvjz6K8hzI9MgCfxAR-63gcjFO7?usp=sharing
 
 ## Training
 1. In the ```config/config.yaml```, update the model name to be one of the four valid values.
@@ -28,6 +28,9 @@
       * Luke converted functions in ```provider.py``` from numpy to pytorch.
       * Abhishek updated training loop to reduce tensor movement between CPU/GPU.
       * Sumanu worked on cleaning the code and verifying the correctness of baseline.
+
+## Project Report
+   * https://drive.google.com/file/d/1EgnxtvYnqaTuwcpw6_jecLRw8OATOokD/view?usp=sharing
 
 ## Powerpoint Presentation
    * https://drive.google.com/file/d/1lCmVzQ5uz5ZrKVPryV7g4u7N6_osuDrh/view?usp=sharing
