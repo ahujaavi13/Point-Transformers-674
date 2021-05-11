@@ -2,4 +2,6 @@
 nneighbor: 16
 nblocks: 4
 transformer_dim: 512
-name: Hengshuang
+name: Abhishek
+n_global_points: 1
+share_params: True
