@@ -7,6 +7,7 @@ import numpy as np
 
 class GlobalAttention(nn.Module):
     def __init__(self, d_model, g) -> None:
+        """Global attention"""
         super().__init__()
 
         self.g_qs = nn.Linear(d_model, d_model, bias=False)
@@ -27,6 +28,7 @@ class GlobalAttention(nn.Module):
         self.g = g
 
     def forward(self, xyz, x, dist_arg_sort):
+        """Attention on first g points of every layer."""
         g_idx, _ = torch.sort(dist_arg_sort[:, :self.g])
         g_xyz = index_points(xyz, g_idx)
         gq, gk, gv = self.g_qs(x[:, :self.g]), index_points(self.g_ks(x), g_idx), index_points(self.g_vs(x), g_idx)

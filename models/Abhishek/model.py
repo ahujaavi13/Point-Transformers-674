@@ -8,6 +8,8 @@ class TransitionDown(nn.Module):
     def __init__(self, k, g, nneighbor, channels) -> None:
         super().__init__()
         self.sa = PointNetSetAbstraction(k, 0, nneighbor, channels[0], channels[1:], group_all=False, knn=True)
+
+        # Separate MLP for classification token
         self.fc_cls = nn.Sequential(
             nn.Linear(channels[0]-3, channels[1]),
             nn.ReLU(),
@@ -16,6 +18,7 @@ class TransitionDown(nn.Module):
         self.g = g
 
     def forward(self, xyz, points):
+        # Forward pass handles global fixed points seperately
         cls_xyz, cls_points = xyz[:, :self.g], points[:, :self.g]
         xyz, points = self.sa(xyz, points)
         cls_points = self.fc_cls(cls_points)
