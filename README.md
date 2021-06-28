@@ -7,11 +7,7 @@
    * https://drive.google.com/drive/folders/1f1UwhSvjz6K8hzI9MgCfxAR-63gcjFO7?usp=sharing
 
 ## Training
-1. In the ```config/config.yaml```, update the model name to be one of the four valid values.
-    * Use ```Hengshuang``` for baseline.
-    * Use ```Sumanu``` for Structured Pruning.
-    * Use ```Luke``` for Dropout Extension.
-    * Use ```Abhishek``` for Global Attention.
+1. In the ```config/config.yaml```, update the model name to ```Abhishek``` for Global Attention.
 
 2. To use a checkpoint for training, download the weight from link under weight file section and copy the model in ```log\{name}\best_model.pth```.
 
